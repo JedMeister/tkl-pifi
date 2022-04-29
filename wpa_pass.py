@@ -1,4 +1,5 @@
 import subprocess
+import os
 from os.path import exists
 import argparse
 
@@ -11,7 +12,7 @@ class WpaConfError(Exception):
     pass
 
 
-def set_wifi_creds(ssid: str, password: str) -> None:
+def set_wifi_creds(ssid: str, password: str, hidden: bool = False) -> None:
     """wpa_passphrase wrapper to write wpa_supplicant.conf"""
     if exists(WPA_SUP_CNF_PATH):
         with open(WPA_SUP_CNF_PATH) as fob:
@@ -29,6 +30,8 @@ def set_wifi_creds(ssid: str, password: str) -> None:
         # exclude commented plain text password
         if not line.lstrip().startswith('#psk='):
             conf_lines.append(line+'\n')
+            if hidden and line.lstrip().startswith('psk='):
+                conf_lines.append('\tscan_ssid=1\n')
 
     with open(WPA_SUP_CNF_PATH, 'w') as fob:
         fob.writelines(conf_lines)
