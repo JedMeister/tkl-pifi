@@ -32,3 +32,4 @@ def set_wifi_creds(ssid: str, password: str) -> None:
 
     with open(WPA_SUP_CNF_PATH, 'w') as fob:
         fob.writelines(conf_lines)
+    os.chmod(WPA_SUP_CNF_PATH, 0o600)
